@@ -1,0 +1,25 @@
+{
+  "name": "bacon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.13.3",
+    "jade": "^1.11.0",
+    "jquery": "^2.1.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adbooth/bacon.git"
+  },
+  "author": "Andrew D. Booth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adbooth/bacon/issues"
+  },
+  "homepage": "https://github.com/adbooth/bacon#readme"
+}
