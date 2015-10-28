@@ -1,0 +1,28 @@
+doctype html
+html(lang='en')
+head(style='position:relative;min-height:100%')
+    // Meta
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
+    
+    // CSS
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
+    link(rel='stylesheet', href='css/start.css')
+    
+    //- Javascript
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js', defer)
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', defer)
+    
+    // Page stuff
+    link(rel='shortcut icon', href='')
+    title Steal the Bacon Start
+body
+    div#theater.container
+    h2 START
+    form(method='post')
+        div.form-group
+            label(for='username')
+            input(type='text', name='username')
+        div.form-group
+            button.btn.btn-default(type='submit') Submit

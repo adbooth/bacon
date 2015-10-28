@@ -1,0 +1,15 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    background-color: Cornsilk;
+    padding-top: 100px;
+    margin-bottom: 50px;
+}
+
+#theater {
+    max-width: 500px;
+    background-color: MediumSeaGreen;
+}
