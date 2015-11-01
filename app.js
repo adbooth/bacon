@@ -10,8 +10,6 @@
 
   app.use(express["static"]('public'));
 
-  app.use(require('cookie-parser'));
-
   app.use(require('express-session')({
     secret: '1234567890QWERTY',
     resave: true,
@@ -48,15 +46,18 @@
   }).post(function(req, res) {
     res.contentType('json');
     return res.send({
-      username: req.session.username,
-      x: 200,
-      y: 250
+      player_data: {
+        username: req.session.username,
+        x: 200,
+        y: 250
+      },
+      game_data: {}
     });
   });
 
   server = app.listen(5000, function() {
     var host, port;
-    host = server.address().address;
+    host = 'localhost';
     port = server.address().port;
     return console.log("Application server running at http://" + host + ":" + port);
   });

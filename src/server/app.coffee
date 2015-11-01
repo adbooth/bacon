@@ -7,12 +7,12 @@ app.set 'view engine', 'jade'
 app.use express.static 'public'
 
 # Set up sessions and cookies and stuff
-# app.use require 'cookie-parser'
 app.use require('express-session') {
   secret: '1234567890QWERTY'
   resave: true
   saveUninitialized: true
 }
+# app.use require 'cookie-parser'
 
 # Set up bodyparser for handling forms
 bodyparser = require 'body-parser'
@@ -56,5 +56,5 @@ server = app.listen 5000, ->
   port = server.address().port
   console.log "Application server running at http://#{host}:#{port}"
 
-# Make `app` available to importers
+# Make app available to outside imports
 module.export = app
