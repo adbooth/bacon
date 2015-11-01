@@ -1,15 +1,26 @@
 html {
+    background-color: Brown;
     position: relative;
     min-height: 100%;
 }
 
 body {
-    background-color: Cornsilk;
-    padding-top: 100px;
+    color: Brown;
+    background-color: Ivory;
+    padding-top: 200px;
     margin-bottom: 50px;
 }
 
-#theater {
+.container {
     max-width: 500px;
-    background-color: MediumSeaGreen;
+}
+
+#username {
+    background-color: Ivory;
+    color: Brown;
+}
+
+.btn {
+    color: Ivory;
+    background-color: Brown;
 }
