@@ -31,7 +31,7 @@ task 'start', 'Runs built code', ->
 
 
 task 'clean', 'Cleans out previously generated source', ->
-  clean = exec 'rm *.js controllers/*.js models/*.js'
+  clean = exec 'rm *.js controllers/*.js models/*.js & rmdir models/'
   clean.stdout.on 'data', (data) ->
     console.log "clean stdout: #{data}"
   clean.stderr.on 'data', (data) ->
