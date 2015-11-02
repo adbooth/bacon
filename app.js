@@ -7,9 +7,9 @@
 
   express = require('express');
 
-  app = express();
+  app = exports.app = express();
 
-  app.set('port', process.env.PORT || 5000);
+  game = exports.game = require('./models/Game');
 
   app.use(express["static"](path.join(__dirname, 'public')));
 
@@ -31,7 +31,9 @@
     extended: true
   }));
 
-  app.use('/', require('./controllers'));
+  app.use('/', require('./routes'));
+
+  app.set('port', process.env.PORT || 5000);
 
   server = app.listen(app.get('port'), function() {
     var host, port;
@@ -39,11 +41,5 @@
     port = app.get('port');
     return console.log("Application server running at http://" + host + ":" + port);
   });
-
-  game = require('./models/Game');
-
-  exports.app = app;
-
-  exports.game = game;
 
 }).call(this);
