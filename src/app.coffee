@@ -35,7 +35,7 @@ app.use '/', require './routes'
 
 # Start server
 app.set 'port', process.env.PORT or 5000
-server = app.listen app.get('port'), ->
+server = app.listen app.get 'port', ->
   host = server.address().address
-  port = app.get('port')
+  port = app.get 'port'
   console.log "Application server running at http://#{host}:#{port}"
