@@ -7,6 +7,7 @@ express = require 'express'
 
 # Make Express.js app
 app = express()
+app.set 'port', process.env.PORT or 5000
 
 # Set up Jade engine and static folder
 app.use express.static path.join __dirname, 'public'
@@ -29,9 +30,9 @@ app.use bodyparser.urlencoded {extended: true}
 app.use '/', require './controllers'
 
 # Start server
-server = app.listen 5000, ->
-  host = 'localhost'
-  port = server.address().port
+server = app.listen app.get('port'), ->
+  host = server.address().address
+  port = app.get('port')
   console.log "Application server running at http://#{host}:#{port}"
 
 # Start new game
