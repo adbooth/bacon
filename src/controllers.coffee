@@ -1,3 +1,6 @@
+""" Transpiled from 'src/controllers.coffee' to 'controllers.js'
+"""
+# 3rd party imports
 router = require('express').Router()
 
 # Index route

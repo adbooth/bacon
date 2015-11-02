@@ -1,7 +1,12 @@
-# Make Express.js app
-express = require 'express'
-app = express()
+""" Transpiled from 'src/app.coffee' to 'app.js'
+"""
+# Node imports
 path = require 'path'
+# 3rd party imports
+express = require 'express'
+
+# Make Express.js app
+app = express()
 
 # Set up Jade engine and static folder
 app.use express.static path.join __dirname, 'public'
@@ -13,7 +18,7 @@ app.use require('express-session') {
   resave: true
   saveUninitialized: true
 }
-# app.use require 'cookie-parser'
+app.use require('cookie-parser')()
 
 # Set up bodyparser for handling forms
 bodyparser = require 'body-parser'
@@ -29,5 +34,9 @@ server = app.listen 5000, ->
   port = server.address().port
   console.log "Application server running at http://#{host}:#{port}"
 
-# Make app available to outside imports
-module.export = app
+# Start new game
+game = require './models/Game'
+
+# Make app & game available to outside imports
+exports.app = app
+exports.game = game
