@@ -2,6 +2,9 @@
 """
 # 3rd party imports
 router = require('express').Router()
+# Module imports
+game = require('./app').game
+
 
 # Index route
 router.get '/', (req, res) ->
@@ -33,4 +36,6 @@ router.post '/play', (req, res) ->
     game_data: {}
   }
 
+
+# Export the router that was just made
 module.exports = router
