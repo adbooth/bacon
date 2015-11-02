@@ -6,14 +6,17 @@ path = require 'path'
 express = require 'express'
 
 # Make Express.js app
-app = express()
-app.set 'port', process.env.PORT or 5000
+app = exports.app = express()
 
-# Set up Jade engine and static folder
+# Start new game
+game = exports.game = require './models/Game'
+
+# Set up public folder and Jade view engine
 app.use express.static path.join __dirname, 'public'
 app.set 'view engine', 'jade'
 
-# Set up sessions and cookies and stuff
+# Set up session and cookies
+# TODO Use a more secure secret key for the session setup
 app.use require('express-session') {
   secret: '1234567890QWERTY'
   resave: true
@@ -22,22 +25,17 @@ app.use require('express-session') {
 app.use require('cookie-parser')()
 
 # Set up bodyparser for handling forms
+# TODO Use CSRF for secure form posting
 bodyparser = require 'body-parser'
 app.use bodyparser.json()
 app.use bodyparser.urlencoded {extended: true}
 
-# Grab routers from controllers
-app.use '/', require './controllers'
+# Set up routes
+app.use '/', require './routes'
 
 # Start server
+app.set 'port', process.env.PORT or 5000
 server = app.listen app.get('port'), ->
   host = server.address().address
   port = app.get('port')
   console.log "Application server running at http://#{host}:#{port}"
-
-# Start new game
-game = require './models/Game'
-
-# Make app & game available to outside imports
-exports.app = app
-exports.game = game
