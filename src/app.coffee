@@ -7,8 +7,8 @@ express = require 'express'
 
 # Make Express.js app
 app = exports.app = express()
-Eureca = require 'eureca.io'
-eureca = new Eureca.Server
+# Eureca = require 'eureca.io'
+# eureca = new Eureca.Server
 
 # Start new game
 game = exports.game = require './models/Game'
@@ -43,11 +43,11 @@ server = app.listen app.get 'port', ->
   console.log "Application server running at http://#{host}:#{port}"
 
 # New Eureca stuff
-eureca.attach server
-
-eureca.onConnect (conn) ->
-  console.log "New Client id: #{conn.id}"
-  console.log "New Client remote address: #{conn.remoteAddress}"
-
-eureca.onDisconnect (conn) ->
-  console.log "Client disconnected #{conn.id}"
+# eureca.attach server
+#
+# eureca.onConnect (conn) ->
+#   console.log "New Client id: #{conn.id}"
+#   console.log "New Client remote address: #{conn.remoteAddress}"
+#
+# eureca.onDisconnect (conn) ->
+#   console.log "Client disconnected #{conn.id}"
