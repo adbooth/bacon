@@ -15,10 +15,10 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload:
 
         function preload () {
 
-            game.load.image('background', 'assets/grid.png')
+            game.load.image('background', 'assets/grid.png');
             game.load.image('bullet', 'assets/bullets.png');
             game.load.image('pig', 'assets/pig.png');
-            game.load.image('bacon', 'assets/bacon.png')
+            game.load.image('bacon', 'assets/bacon.png');
 
         }
         var pig;
@@ -29,7 +29,7 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload:
 
         function create () {
 
-            
+
             game.renderer.clearBeforeRender = false;
             game.renderer.roundPixels = true;
 
@@ -41,7 +41,7 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload:
             game.world.setBounds(0, 0, 1920, 1920);
 
 
-            
+
             //  Our ships bullets
         bullets = game.add.group();
         bullets.enableBody = true;
@@ -85,30 +85,24 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload:
         //if a pig overlaps with something from the bacon object (pieces), call collectBacon
         game.physics.arcade.overlap(pig, bacon, collectBacon, null, this);
 
-        if (cursors.up.isDown)
-        {
+        if (cursors.up.isDown){
             game.physics.arcade.accelerationFromRotation(pig.rotation, 200, pig.body.acceleration);
         }
-        else
-        {
+        else{
             pig.body.acceleration.set(0);
         }
 
-        if (cursors.left.isDown)
-        {
+        if (cursors.left.isDown){
             pig.body.angularVelocity = -150;
         }
-        else if (cursors.right.isDown)
-        {
+        else if (cursors.right.isDown){
             pig.body.angularVelocity = 150;
         }
-        else
-        {
+        else{
             pig.body.angularVelocity = 0;
         }
 
-        if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
-        {
+        if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
             fireBullet();
         }
 
@@ -124,12 +118,10 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload:
 
     function fireBullet () {
 
-        if (game.time.now > bulletTime)
-        {
+        if (game.time.now > bulletTime){
             bullet = bullets.getFirstExists(false);
 
-            if (bullet)
-            {
+            if (bullet){
                 bullet.reset(pig.body.x + 16, pig.body.y + 16);
                 bullet.lifespan = 2000;
                 bullet.rotation = pig.rotation;
