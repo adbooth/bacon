@@ -5,6 +5,7 @@ router = require('express').Router()
 # Module imports
 game = require('./app').game
 
+eureca = require('./app').eureca
 
 # Index route
 router.get '/', (req, res) ->
@@ -35,6 +36,7 @@ router.post '/play', (req, res) ->
     }
     game_data: {}
   }
+  eureca.printhere('stuff');
 
 
 # Export the router that was just made

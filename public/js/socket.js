@@ -1,29 +1,66 @@
-/* application/static/js/socket.js */
-// Do synchronous AJAX call to ask for username
-var client_username, initial_player_data, initial_game_data;
-$.ajax({
-    type: 'POST',
-    async: false,
-    success: function(response){
-        client_username = response.player_data.username;
-        initial_player_data = response.player_data;
-        initial_game_data = response.game_data;
-    }
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
+    preload: preload,
+    create: eurecaClientSetup,
+    update: update
 });
 
-console.log('INIITAL PLAYER DATA');
-console.log(initial_player_data);
-console.log('INITIAL GAME DATA:');
-console.log(initial_game_data);
+var ready = false;
+var eurecaServer;
 
-// Create socket after we have the username to sign our communications with
-// var thisURL = location.protocol + '//' + document.domain + (location.port ? ':' + location.port : '');
-// socket = io.connect(thisURL);
-//
-// // On connect, start handshake
-// socket.on('connect', function(){
-//     socket.emit('HANDSHAKE_FROM_CLIENT', {
-//         'username': client_username,
-//         'payload': 'hand'
-//     });
-// });
+function eurecaClientSetup(){
+    var eurecaClient = new Eureca.Client();
+
+    eurecaClient.ready(function(proxy){
+        eurecaServer = proxy;
+    });
+
+    eurecaClient.exports.setId = function(id){
+        myId = id;
+        create();
+        eurecaServer.handshake();
+        ready = true;
+    };
+
+    eurecaClient.exports.kill = function(id){
+
+    };
+    
+    eurecaClient.exports.echoPrint = function(data){
+        console.log("Echoed string: ", data);
+    };
+}
+
+function preload(){
+    game.load.image('blue-circle', '/assets/circle-32.ico');
+    game.load.image('red-circle', '/assets/circle-32.gif');
+}
+
+function create(){
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    protagonist = game.add.sprite(50, 50, 'blue-circle');
+    game.physics.arcade.enable(protagonist);
+    protagonist.body.collideWorldBounds = true;
+
+    cursors = game.input.keyboard.createCursorKeys();
+}
+
+function update(){
+    if(!ready) return;
+
+    // Moves protagonist based on input
+    protagonist.body.velocity.x = 0;
+    protagonist.body.velocity.y = 0;
+    if(cursors.left.isDown){
+        protagonist.body.velocity.x -= 150;
+    }
+    if(cursors.right.isDown){
+        protagonist.body.velocity.x += 150;
+    }
+    if(cursors.up.isDown){
+        protagonist.body.velocity.y -= 150;
+    }
+    if(cursors.down.isDown){
+        protagonist.body.velocity.y += 150;
+    }
+}
