@@ -58,4 +58,4 @@ eureca.onDisconnect (conn) ->
 
 eureca.exports.getPrint = (data) ->
   console.log "Received string: #{data}"
-  this.proxy.echoPrint data
+  # this.proxy.echoPrint data
