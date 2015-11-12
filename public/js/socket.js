@@ -6,25 +6,26 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
 
 var ready = false;
 var eurecaServer;
+var protagonist;
 
 function eurecaClientSetup(){
     var eurecaClient = new Eureca.Client();
 
     eurecaClient.ready(function(proxy){
         eurecaServer = proxy;
+        ready = true;
+        create();
     });
 
     eurecaClient.exports.setId = function(id){
         myId = id;
-        create();
         eurecaServer.handshake();
-        ready = true;
     };
 
     eurecaClient.exports.kill = function(id){
 
     };
-    
+
     eurecaClient.exports.echoPrint = function(data){
         console.log("Echoed string: ", data);
     };
