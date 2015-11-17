@@ -15,4 +15,4 @@ class Game
     delete @player[username]
 
 
-module.exports = new Game()
+module.exports = new Game
