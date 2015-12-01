@@ -1,4 +1,3 @@
-console.log("yaok")
 var myId= 0;
 var bulletTime = 0;
 
@@ -98,13 +97,13 @@ Pig = function (index, game, player) {
   this.bullets.setAll('checkWorldBounds', true);
   this.canFire = true;
 
-  this.pig = game.add.sprite(x, y, 'pig');
-  this.pig.anchor.set(0.5);
-
   this.currentSpeed =0;
   this.fireRate = 500;
   this.nextFire = 0;
   this.alive = true;
+
+	this.pig = game.add.sprite(x, y, 'pig');
+	this.pig.anchor.set(0.5, 0.5);
 
   this.pig.id = index;
   game.physics.enable(this.pig, Phaser.Physics.ARCADE);
@@ -120,6 +119,7 @@ Pig = function (index, game, player) {
 }
 
 Pig.prototype.update = function() {
+
   var inputChanged = (
 		this.cursor.left != this.input.left ||
 		this.cursor.right != this.input.right ||
@@ -142,12 +142,12 @@ Pig.prototype.update = function() {
 		}
 	}
   //cursor value is now updated by eurecaClient.exports.updateState method
-    if (this.cursor.left) this.pig.angle -= 1;
+    if (this.cursor.left) this.pig.angle -= 1.5;
 
-    else if (this.cursor.right) this.pig.angle += 1;
+    else if (this.cursor.right) this.pig.angle += 1.5;
 
     //  The speed we'll travel at
-    if (this.cursor.up) this.currentSpeed = 300;
+    if (this.cursor.up) this.currentSpeed = 800;
 
 
     else{
@@ -183,7 +183,7 @@ Pig.prototype.update = function() {
     this.pig.kill();
   }
 
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
+  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: eurecaClientSetup, update: update });
         function preload () {
 
             game.load.image('background', 'assets/grid.png');
