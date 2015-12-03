@@ -52,6 +52,7 @@ var eurecaClientSetup = function() {
 
 		console.log('SPAWN');
 		var pige = new Pig(i, game, pig);
+		console.log(pige.health);
 		pigsList[i] = pige;
 	}
 
@@ -76,6 +77,7 @@ Pig = function (index, game, player) {
 		left:false,
 		right:false,
 		up:false,
+		down:false,
 		fire:false
 	}
 
@@ -83,6 +85,7 @@ Pig = function (index, game, player) {
 		left:false,
 		right:false,
 		up:false,
+		down:false,
 		fire:false
 	}
 
@@ -90,7 +93,6 @@ Pig = function (index, game, player) {
   var y = 0;
 
   this.game = game;
-  this.health = 10000;
   this.player = player;
   this.bullets = game.add.group();
   this.bullets.enableBody = true;
@@ -109,6 +111,7 @@ Pig = function (index, game, player) {
 
 	this.pig = game.add.sprite(x, y, 'pig');
 	this.pig.anchor.set(0.5, 0.5);
+	this.pig.health = 3;
 
   this.pig.id = index;
   game.physics.enable(this.pig, Phaser.Physics.ARCADE);
@@ -123,11 +126,11 @@ Pig = function (index, game, player) {
 }
 
 Pig.prototype.update = function() {
-
   var inputChanged = (
 		this.cursor.left != this.input.left ||
 		this.cursor.right != this.input.right ||
 		this.cursor.up != this.input.up ||
+		this.cursor.down != this.input.down ||
 		this.cursor.fire != this.input.fire
 	);
 
@@ -144,14 +147,19 @@ Pig.prototype.update = function() {
 			this.input.rotation = this.pig.rotation;
 			this.input.angularVelocity= this.pig.body.angularVelocity;
 			this.input.currentSpeed= this.currentSpeed;
+			this.input.acceleration = this.pig.body.acceleration;
 	   	eurecaServer.handleKeys(this.input);
 
 		}
 	}
   //cursor value is now updated by eurecaClient.exports.updateState method
 	//  The speed we'll travel at
-		if (this.cursor.up) game.physics.arcade.accelerationFromRotation(this.pig.rotation, 100000, this.pig.body.acceleration);
-
+		if (this.cursor.up) {
+			game.physics.arcade.accelerationFromRotation(this.pig.rotation, 100000, this.pig.body.acceleration);
+		}
+		else if (this.cursor.down) {
+			game.physics.arcade.accelerationFromRotation(this.pig.rotation, -100000, this.pig.body.acceleration);
+		}
 		else{
 						this.pig.body.acceleration.set(0);
 				}
@@ -257,6 +265,7 @@ Pig.prototype.update = function() {
         player.input.left = cursors.left.isDown;
         player.input.right = cursors.right.isDown;
         player.input.up = cursors.up.isDown;
+				player.input.down = cursors.down.isDown;
         player.input.fire = game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR);
         player.input.tx = game.input.x+ game.camera.x;
         player.input.ty = game.input.y+ game.camera.y;
@@ -265,6 +274,7 @@ Pig.prototype.update = function() {
 
         for (var i in pigsList){
       		if (!pigsList[i]) continue;
+					pigsList
       		var curBullets = pigsList[i].bullets;
       		var curPig = pigsList[i].pig;
 
@@ -281,9 +291,7 @@ Pig.prototype.update = function() {
 
 		function bulletHitPlayer (pig, bullet) {
 		    bullet.kill();
-				console.log(pig.health);
 				pig.health--;
-				console.log(pig.health);
 				if(pig.health <= 0) pig.kill();
 
 		}
