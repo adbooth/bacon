@@ -25,6 +25,7 @@ var eurecaClientSetup = function() {
 	});
 
 
+
 	//methods defined under "exports" namespace become available in the server side
 
 	eurecaClient.exports.setId = function(id)
@@ -60,7 +61,11 @@ var eurecaClientSetup = function() {
 			pigsList[id].cursor = state;
 			pigsList[id].pig.x = state.x;
 			pigsList[id].pig.y = state.y;
-			pigsList[id].pig.body.angularVelocity = state.body.angularVelocity;
+			pigsList[id].pig.body.angularVelocity = state.angularVelocity;
+			pigsList[id].pig.angle = state.angle;
+
+			pigsList[id].pig.rotation = state.rotation;
+			pigsList[id].currentSpeed = state.currentSpeed;
 			pigsList[id].update();
 		}
 	}
@@ -85,7 +90,7 @@ Pig = function (index, game, player) {
   var y = 0;
 
   this.game = game;
-  this.health = 30;
+  this.health = 10000;
   this.player = player;
   this.bullets = game.add.group();
   this.bullets.enableBody = true;
@@ -114,7 +119,6 @@ Pig = function (index, game, player) {
   this.pig.body.bounce.setTo(0, 0);
 
   this.pig.angle = 0;
-
   game.physics.arcade.velocityFromRotation(this.pig.rotation, 0, this.pig.body.velocity);
 }
 
@@ -137,37 +141,36 @@ Pig.prototype.update = function() {
 			this.input.x = this.pig.x;
 			this.input.y = this.pig.y;
 			this.input.angle = this.pig.angle;
+			this.input.rotation = this.pig.rotation;
+			this.input.angularVelocity= this.pig.body.angularVelocity;
+			this.input.currentSpeed= this.currentSpeed;
 	   	eurecaServer.handleKeys(this.input);
 
 		}
 	}
   //cursor value is now updated by eurecaClient.exports.updateState method
-    if (this.cursor.left) this.pig.body.angularVelocity -= 20;
+	//  The speed we'll travel at
+		if (this.cursor.up) game.physics.arcade.accelerationFromRotation(this.pig.rotation, 100000, this.pig.body.acceleration);
 
-    else if (this.cursor.right) this.pig.body.angularVelocity += 20;
+		else{
+						this.pig.body.acceleration.set(0);
+				}
+
+		if (this.cursor.left) this.pig.body.angularVelocity -= 3.6;
+
+    else if (this.cursor.right) this.pig.body.angularVelocity += 3.6;
 
 		else {
 			this.pig.body.angularVelocity = 0;
 		}
 
-    //  The speed we'll travel at
-    if (this.cursor.up) this.currentSpeed = 600;
-
-
-    else{
-        if (this.currentSpeed > 0){
-
-            this.currentSpeed -= 4;
-        }
-    }
     if (this.cursor.fire && this.canFire){
 			this.fire({x:this.cursor.tx, y:this.cursor.ty});
 		}
-    if (this.currentSpeed > 0) game.physics.arcade.velocityFromRotation(this.pig.rotation, this.currentSpeed, this.pig.body.velocity);
-    else game.physics.arcade.velocityFromRotation(this.pig.rotation, 0, this.pig.body.velocity);
-
-
+    // if (this.currentSpeed > 0) game.physics.arcade.velocityFromRotation(this.pig.rotation, this.currentSpeed, this.pig.body.velocity);
+    // else game.physics.arcade.velocityFromRotation(this.pig.rotation, 0, this.pig.body.velocity);
 }
+
   Pig.prototype.fire = function() {
 				if (!this.alive) return;
 				if (this.game.time.now > this.nextFire && this.bullets.countDead() > 0)
@@ -176,7 +179,7 @@ Pig.prototype.update = function() {
             var bullet = this.bullets.getFirstDead();
             bullet.reset(this.pig.body.x + 16, this.pig.body.y + 16);
 
-						game.physics.arcade.velocityFromRotation(pig.rotation, 400, bullet.body.velocity);
+						game.physics.arcade.velocityFromRotation(this.pig.rotation, 400,bullet.body.velocity);
 
         }
 			}
@@ -274,45 +277,17 @@ Pig.prototype.update = function() {
     			if (pigsList[j].alive) pigsList[j].update();
     		  }
         }
-
-        // if (cursors.up.isDown){
-        //     game.physics.arcade.accelerationFromRotation(pig.rotation, 200, pig.body.acceleration);
-        // }
-        // else{
-        //     pig.body.acceleration.set(0);
-        // }
-        //
-        // if (cursors.left.isDown){
-        //     pig.body.angularVelocity = -150;
-        // }
-        // else if (cursors.right.isDown){
-        //     pig.body.angularVelocity = 150;
-        // }
-        // else{
-        //     pig.body.angularVelocity = 0;
-        // }
-        //
-        // if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
-        //     fireBullet();
-        // }
-
-       // screenWrap(pig);
-
-        //bullets.forEachExists(screenWrap, this);
-
     }
 
 		function bulletHitPlayer (pig, bullet) {
-
 		    bullet.kill();
+				console.log(pig.health);
+				pig.health--;
+				console.log(pig.health);
+				if(pig.health <= 0) pig.kill();
+
 		}
 
-    // function collectBacon (pig, piece) {
-    //     piece.kill();
-    // }
-// function render() {
-
-//     game.debug.cameraInfo(game.camera, game.centerx, game.centery);
-//     game.debug.spriteInfo(sprite, 32, 32);
-
-// }
+    function collectBacon (pig, piece) {
+        piece.kill();
+    }
