@@ -50,26 +50,24 @@ Eureca.onConnect (conn) ->
   remote = Eureca.getClient conn.id
   # Add client to client list
   # TODO acccess db here for initialization info
-  # TODO get username from POST
   game.addplayer conn.id, remote, username
 
   # Send ID to client
   remote.setId conn.id
 
-# On client disconnect, remove client from client list and signal disconnect to
-# other clients
+# On client disconnect, remove client from client list and signal disconnect to other clients
 Eureca.onDisconnect (conn) ->
   console.log "Client disconnected with id: #{conn.id}", conn.remoteAddress
   # Remove client from client list
-  delete clients[conn.id]
+  delete game.players[conn.id]
 
   # Signal disconnect to other clients
-  for client in clients
-    client.remote.kill conn.id
+  for player in game.players
+    player.remote.kill conn.id
 
 ### Here's where we'll export some functions the client can call on the server
 ###
 # So this is where we have to get the client up to speed I'm guessing
 Eureca.exports.handshake = ->
-  for client in clients
-    client.spawn client.id, client.x, client.y
+  for player in game.players
+    client.spawn client.id, client.username, client.x, client.y

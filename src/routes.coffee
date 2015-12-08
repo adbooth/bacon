@@ -27,15 +27,15 @@ router.post '/start', (req, res) ->
 # Play routes
 router.get '/play', (req, res) ->
   res.render 'play'
-router.post '/play', (req, res) ->
-  res.send {
-    player_data: {
-      username: req.session.username
-      x: 300
-      y: 300
-    }
-    game_data: {}
-  }
+# router.post '/play', (req, res) ->
+#   res.send {
+#     player_data: {
+#       username: req.session.username
+#       x: 300
+#       y: 300
+#     }
+#     game_data: {}
+#   }
 
 
 # Export the router that was just made
