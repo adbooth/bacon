@@ -5,30 +5,30 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
 });
 
 var ready = false;
-var eurecaServer;
+var server;
 var protagonist;
 
 function eurecaClientSetup(){
     var eurecaClient = new Eureca.Client();
 
     eurecaClient.ready(function(proxy){
-        eurecaServer = proxy;
-        ready = true;
-        create();
+        server = proxy;
     });
 
     eurecaClient.exports.setId = function(id){
         myId = id;
-        eurecaServer.handshake();
+        create();
+        server.handshake();
+        ready = true;
     };
 
-    eurecaClient.exports.kill = function(id){
+    eurecaClient.exports.spawn = function(id, x, y){
+        if(id == myId) return;
 
+        console.log("Spawn ", id);
+        
     };
 
-    eurecaClient.exports.echoPrint = function(data){
-        console.log("Echoed string: ", data);
-    };
 }
 
 function preload(){
