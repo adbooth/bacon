@@ -4,9 +4,10 @@
   var Player;
 
   Player = (function() {
-    function Player(game, username, x, y) {
+    function Player(game, id, remote, x, y) {
       this.game = game;
-      this.username = username;
+      this.id = id;
+      this.remote = remote;
       this.x = x != null ? x : 50;
       this.y = y != null ? y : 50;
     }

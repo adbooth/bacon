@@ -1,5 +1,3 @@
-""" Transpiled from 'src/app.coffee' to 'app.js'
-"""
 # Node imports
 path = require 'path'
 # 3rd party imports
@@ -8,7 +6,7 @@ express = require 'express'
 # Make Express.js app
 app = exports.app = express()
 Eureca = require 'eureca.io'
-Eureca = exports.Eureca = new Eureca.Server {allow: ['setId', 'kill', 'spawn']}
+eurecaServer = exports.Eureca = new Eureca.Server {allow: ['setId', 'kill', 'spawn', 'updateState']}
 # Set up public folder and Jade view engine
 app.use express.static path.join __dirname, 'public'
 app.set 'view engine', 'jade'
@@ -42,24 +40,25 @@ server = app.listen app.get('port'), ->
 
 
 # Eureca server start and event handlers
-Eureca.attach server
+eurecaServer.attach server
 
 # On client connect, add client to client list and send connection ID to client
-Eureca.onConnect (conn) ->
+eurecaServer.onConnect (conn) ->
   console.log "New client connected with id: #{conn.id}", conn.remoteAddress
-  remote = Eureca.getClient conn.id
+  remote = eurecaServer.getClient conn.id
   # Add client to client list
   # TODO acccess db here for initialization info
-  game.addplayer conn.id, remote, username
+  game.addPlayer conn.id, remote
 
   # Send ID to client
   remote.setId conn.id
 
+
 # On client disconnect, remove client from client list and signal disconnect to other clients
-Eureca.onDisconnect (conn) ->
-  console.log "Client disconnected with id: #{conn.id}", conn.remoteAddress
+eurecaServer.onDisconnect (conn) ->
+  console.log "Client disconnected with id: #{conn.id}"
   # Remove client from client list
-  delete game.players[conn.id]
+  game.removePlayer conn.id
 
   # Signal disconnect to other clients
   for player in game.players
@@ -68,6 +67,16 @@ Eureca.onDisconnect (conn) ->
 ### Here's where we'll export some functions the client can call on the server
 ###
 # So this is where we have to get the client up to speed I'm guessing
-Eureca.exports.handshake = ->
+eurecaServer.exports.handshake = ->
   for player in game.players
-    client.spawn client.id, client.username, client.x, client.y
+    laststate = player.laststate
+    [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
+    player.spawn player.id, x, y
+
+eurecaServer.exports.handleKeys = (keys) ->
+  conn = this.connection
+  updatedClient = game.players[conn.id]
+
+  for player in game.players
+    player.remote.updateState updatedClient.id, keys
+    player.laststate = keys

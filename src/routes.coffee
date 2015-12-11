@@ -9,18 +9,18 @@ game = require('./app').game
 
 # Index route
 router.get '/', (req, res) ->
-  res.redirect '/start'
+  res.redirect '/play'
 
 
 # Start routes
 router.get '/start', (req, res) ->
   res.render 'start'
 router.post '/start', (req, res) ->
-  target_username = req.body.username
-  unless game.usernameExists target_username
-    req.session.username = target_username
+  # target_username = req.body.username
+  # unless game.usernameExists target_username
+    # req.session.username = target_username
     res.redirect '/play'
-  else
+  # else
     res.render 'start'
 
 
