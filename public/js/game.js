@@ -6,6 +6,7 @@ var playerList;
 var land;
 var cursors;
 var bulletTime = 0;
+var bounds = 2000;
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
     preload: preload,
@@ -24,7 +25,7 @@ function preload(){
 // Builds/initializes game world
 function create(){
     // Must make size of game world
-    game.world.setBounds(-1000, -1000, 2000, 2000);
+    game.world.setBounds(-bounds/2, -bounds/2, bounds, bounds);
     // Not sure what this does
     game.stage.disableVisibilityChange  = true;
 
@@ -33,7 +34,7 @@ function create(){
     land.fixedToCamera = true;
 
     // Protagonist setup
-    protagonist = new Player(myFingerprint, game, 0, 0);
+    protagonist = new Player(myFingerprint, game, game.rnd.integerInRange(-bounds/2, bounds/2), game.rnd.integerInRange(-bounds/2, bounds/2));
     playerList = {};
     playerList[myFingerprint] = protagonist;
     sprite = protagonist.sprite;

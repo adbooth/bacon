@@ -3,6 +3,10 @@ path = require 'path'
 # 3rd party imports
 express = require 'express'
 
+
+# Start new game
+game = exports.game = require './models/Game'
+
 # Make Express.js app
 app = exports.app = express()
 Eureca = require 'eureca.io'
@@ -29,10 +33,6 @@ app.use bodyparser.urlencoded {extended: true}
 app.use '/', require './routes'
 
 
-# Start new game
-game = exports.game = require './models/Game'
-
-
 # Start server
 app.set 'port', process.env.PORT or 5000
 server = app.listen app.get('port'), ->
@@ -48,11 +48,12 @@ eurecaServer.attach server
 eurecaServer.onConnect (conn) ->
   console.log "New client connected with id: #{conn.id}", conn.remoteAddress
   remote = eurecaServer.getClient conn.id
+  # Send fingerprint to client
+  username = remote.setFingerprint conn.id
+  console.log "Received username is ", username
   # Add client to client list
   # TODO acccess db here for initialization info
-  game.addPlayer conn.id, remote
-  # Send fingerprint to client
-  remote.setFingerprint conn.id
+  game.addPlayer conn.id, remote, username
 
 
 # On client disconnect, remove client from client list and broadcast disconnect
@@ -66,7 +67,10 @@ eurecaServer.onDisconnect (conn) ->
     player.remote.clientDisconnect conn.id
 
 ### Here's where we'll export some server functions the client can call ###
-# So this is where we have to get the client up to speed I'm guessing
+###
+ * Called in client setup function
+ * Gets client up to speed
+ ###
 eurecaServer.exports.handshake = ->
   console.log "In handshake,", game.players
   requesterFingerprint = this.connection.id
@@ -79,16 +83,14 @@ eurecaServer.exports.handshake = ->
     [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
     requester.remote.spawnEnemy fingerprint, x, y
 
-  # for fingerprint, player of game.players
-  #   console.log "Spawning #{fingerprint} on client #{this.connection.id}"
-  #   laststate = player.laststate
-  #   [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
-  #   player.remote.spawnEnemy fingerprint, x, y
-
+### handleKeys
+ * Called in `Player`'s `update()` function
+ * Updates state of all players' simulations after another player input/update
+ ###
 eurecaServer.exports.handleKeys = (keys) ->
   conn = this.connection
   updatedClient = game.players[conn.id]
 
   for fingerprint, player of game.players
-    player.remote.updateState updatedClient.id, keys
+    player.remote.updateState updatedClient.fingerprint, keys
     player.laststate = keys

@@ -26,6 +26,13 @@ var eurecaClientSetup = function(){
         create();
         eurecaServer.handshake();
         ready = true;
+        var cookies = document.cookie.split(';');
+        for(var index in cookies){
+            if(cookies[index].indexOf('username=') > -1){
+                console.log(cookies[index].replace('username=', ''));
+                return cookies[index].replace('username=', '');
+            }
+        }
     };
 
     /** clientDisconnect

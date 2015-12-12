@@ -91,9 +91,9 @@ Player.prototype.update = function(){
         this.sprite.body.acceleration.set(0);
     }
     if(this.cursor.left){
-        this.sprite.body.angularVelocity -=3.6;
+        this.sprite.body.angularVelocity = -400;
     }else if(this.cursor.right){
-        this.sprite.body.angularVelocity += 3.6;
+        this.sprite.body.angularVelocity = 400;
     }else{
         this.sprite.body.angularVelocity = 0;
     }

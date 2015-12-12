@@ -3,7 +3,7 @@
 
 
 class Player
-  constructor: (@game, @id, @remote, @x=0, @y=0) ->
+  constructor: (@game, @fingerprint, @remote, @username, @x=0, @y=0) ->
 
 
 module.exports = Player
