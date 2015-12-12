@@ -10,7 +10,7 @@
       this.players = {};
     }
 
-    Game.prototype.addPlayer = function(username, x, y) {
+    Game.prototype.addPlayer = function(id, remote, x, y) {
       var player;
       if (x == null) {
         x = 50;
@@ -18,18 +18,18 @@
       if (y == null) {
         y = 50;
       }
-      player = new Player(this, username, x, y);
-      return this.players[username] = player;
+      player = new Player(this, id, remote, x, y);
+      return this.players[id] = player;
     };
 
-    Game.prototype.removePlayer = function(username) {
-      return delete this.player[username];
+    Game.prototype.removePlayer = function(id) {
+      return delete this.player[id];
     };
 
     return Game;
 
   })();
 
-  module.exports = new Game();
+  module.exports = new Game;
 
 }).call(this);
