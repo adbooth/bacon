@@ -6,7 +6,9 @@ express = require 'express'
 # Make Express.js app
 app = exports.app = express()
 Eureca = require 'eureca.io'
-eurecaServer = exports.Eureca = new Eureca.Server {allow: ['setId', 'kill', 'spawn', 'updateState']}
+eurecaServer = exports.Eureca = new Eureca.Server {
+  allow: ['setFingerprint', 'clientDisconnect', 'spawnEnemy', 'updateState']
+}
 # Set up public folder and Jade view engine
 app.use express.static path.join __dirname, 'public'
 app.set 'view engine', 'jade'
@@ -51,32 +53,33 @@ eurecaServer.onConnect (conn) ->
   game.addPlayer conn.id, remote
 
   # Send ID to client
-  remote.setId conn.id
+  remote.setFingerprint conn.id
 
 
-# On client disconnect, remove client from client list and signal disconnect to other clients
+# On client disconnect, remove client from client list and broadcast disconnect
 eurecaServer.onDisconnect (conn) ->
   console.log "Client disconnected with id: #{conn.id}"
   # Remove client from client list
   game.removePlayer conn.id
 
   # Signal disconnect to other clients
-  for player in game.players
-    player.remote.kill conn.id
+  for fingerprint, player of game.players
+    player.remote.clientDisconnect conn.id
 
-### Here's where we'll export some functions the client can call on the server
-###
+### Here's where we'll export some server functions the client can call ###
 # So this is where we have to get the client up to speed I'm guessing
 eurecaServer.exports.handshake = ->
-  for player in game.players
+  console.log "In handshake,", game.players
+  for fingerprint, player of game.players
+    console.log "Spawning #{fingerprint} on client #{this.connection.id}"
     laststate = player.laststate
     [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
-    player.spawn player.id, x, y
+    player.remote.spawnEnemy player.id, x, y
 
 eurecaServer.exports.handleKeys = (keys) ->
   conn = this.connection
   updatedClient = game.players[conn.id]
 
-  for player in game.players
+  for fingerprint, player of game.players
     player.remote.updateState updatedClient.id, keys
     player.laststate = keys

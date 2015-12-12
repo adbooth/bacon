@@ -7,12 +7,11 @@ Player = require './Player'
 class Game
   constructor: -> @players = {}
 
-  addPlayer: (id, remote, x=50, y=50) ->
-    player = new Player(this, id, remote, x, y)
-    @players[id] = player
+  addPlayer: (fingerprint, remote, x=50, y=50) ->
+    @players[fingerprint] = new Player(this, fingerprint, remote, x, y)
 
-  removePlayer: (id) ->
-    delete @player[id]
+  removePlayer: (fingerprint) ->
+    delete @players[fingerprint]
 
   # usernameExists: (username) ->
   #   return username in [player.username for player in @players]

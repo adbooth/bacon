@@ -3,16 +3,7 @@
 // Server globals
 var myFingerprint;
 var eurecaServer;
-
-// Phaser globals
 var ready = false;
-var cursors;
-var bulletTime = 0;
-
-// Game globals
-var protagonist;
-var playerList;
-var land;
 
 var eurecaClientSetup = function(){
     // Create instance of Eureca client
@@ -62,6 +53,7 @@ var eurecaClientSetup = function(){
         // Add new player to player list
         // TODO figure out why the hell the tutorial has nested for-loops
         playerList[peerFingerprint] = new Pig(peerFingerprint, game);
+        console.log("Enemy spawned");
     };
 
     /** updateState
@@ -73,13 +65,13 @@ var eurecaClientSetup = function(){
         if(player){
             player.cursor = state;
             // Update location data
-            player.pig.x = state.x;
-            player.pig.y = state.y;
+            player.sprite.x = state.x;
+            player.sprite.y = state.y;
             // Update movement data
-            player.pig.body.angularVelocity = state.angularVelocity;
-            player.pig.angle = state.angle;
-            player.pig.rotation = state.rotation;
-            player.pig.currentSpeed = state.currentSpeed;
+            player.sprite.body.angularVelocity = state.angularVelocity;
+            player.sprite.angle = state.angle;
+            player.sprite.rotation = state.rotation;
+            player.sprite.currentSpeed = state.currentSpeed;
             player.update();
         }
     };
