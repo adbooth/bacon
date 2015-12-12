@@ -69,7 +69,6 @@ function update(){
         if(!playerList[key]) continue;
         if(playerList[key].alive){
             playerList[key].update();
-            // console.log("Updating", key);
         }
     }}
 }

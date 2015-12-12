@@ -51,8 +51,7 @@ eurecaServer.onConnect (conn) ->
   # Add client to client list
   # TODO acccess db here for initialization info
   game.addPlayer conn.id, remote
-
-  # Send ID to client
+  # Send fingerprint to client
   remote.setFingerprint conn.id
 
 
@@ -70,11 +69,21 @@ eurecaServer.onDisconnect (conn) ->
 # So this is where we have to get the client up to speed I'm guessing
 eurecaServer.exports.handshake = ->
   console.log "In handshake,", game.players
+  requesterFingerprint = this.connection.id
+  requester = game.players[requesterFingerprint]
   for fingerprint, player of game.players
-    console.log "Spawning #{fingerprint} on client #{this.connection.id}"
+    # Alert existing players of join
+    player.remote.spawnEnemy requesterFingerprint, requester.x, requester.y
+    # Fill requester in on other players
     laststate = player.laststate
     [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
-    player.remote.spawnEnemy player.id, x, y
+    requester.remote.spawnEnemy fingerprint, x, y
+
+  # for fingerprint, player of game.players
+  #   console.log "Spawning #{fingerprint} on client #{this.connection.id}"
+  #   laststate = player.laststate
+  #   [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
+  #   player.remote.spawnEnemy fingerprint, x, y
 
 eurecaServer.exports.handleKeys = (keys) ->
   conn = this.connection

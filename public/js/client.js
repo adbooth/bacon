@@ -21,14 +21,10 @@ var eurecaClientSetup = function(){
      * `fingerprint` is created by Eureca library somehow and used as a connection ID
      */
     eurecaClient.exports.setFingerprint = function(fingerprint){
-        // Local var `id` will now hold clients ID
         myFingerprint = fingerprint;
         console.log("Fingerprint set to: ", myFingerprint);
-        // `create()` moved here so that Phaser environment is not created until fingerprint is assigned
         create();
-        // Here the client makes contact with the server to initialize some stuff?
         eurecaServer.handshake();
-        // Guard in the update loop to keep from updating occuring until fingerprint is assigned
         ready = true;
     };
 
@@ -50,9 +46,9 @@ var eurecaClientSetup = function(){
     eurecaClient.exports.spawnEnemy = function(peerFingerprint, x, y){
         // Guard against spawning client's self
         if(myFingerprint == peerFingerprint) return;
+        console.log(myFingerprint, "spawning player on", peerFingerprint);
         // Add new player to player list
-        // TODO figure out why the hell the tutorial has nested for-loops
-        playerList[peerFingerprint] = new Pig(peerFingerprint, game);
+        playerList[peerFingerprint] = new Player(peerFingerprint, game);
         console.log("Enemy spawned");
     };
 

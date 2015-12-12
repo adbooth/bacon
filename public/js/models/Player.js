@@ -1,8 +1,11 @@
 /* Player.js */
 
-
+/**
+ *
+ */
 Player = function(fingerprint, game, x, y){
     this.game = game;
+    console.log("Creating", fingerprint, "'s sprite'");
     this.sprite = game.add.sprite(x, y, 'pig');
     this.fingerprint = this.sprite.id = fingerprint;
     this.alive = true;
@@ -118,6 +121,9 @@ Player.prototype.fire = function(){
     }
 };
 
+/**
+ *
+ */
 Player.prototype.kill = function(){
     this.alive = false;
     this.sprite.kill();
