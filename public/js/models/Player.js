@@ -1,7 +1,7 @@
 /* Player.js */
 
-/**
- *
+/** Player
+ * Class represents a player object for the game, with reference to a Phaser sprite object
  */
 Player = function(fingerprint, game, x, y){
     this.game = game;
@@ -54,9 +54,13 @@ Player = function(fingerprint, game, x, y){
 };
 
 /** update
- *
+ * Called in Phaser's `update()` loop
+ * Updates player's game state on server as well as in game from server input
  */
 Player.prototype.update = function(){
+    // We shouldn't have to worry about dead players
+    if(!this.alive) return;
+
     // Detect a change input between client and server states
     var inputChanged = (
         this.cursor.left != this.input.left ||
@@ -106,7 +110,7 @@ Player.prototype.update = function(){
 };
 
 /** fire
- *
+ * TODO
  */
 Player.prototype.fire = function(){
     if(!this.alive) return;
@@ -122,7 +126,7 @@ Player.prototype.fire = function(){
 };
 
 /**
- *
+ * TODO
  */
 Player.prototype.kill = function(){
     this.alive = false;

@@ -16,41 +16,40 @@ var eurecaClientSetup = function(){
 
     /* Exported methods for use on server */
 
-    /** setId
+    /** handshakeToClient
      * Called once by server in server event handler `onConnect`
      * `fingerprint` is created by Eureca library somehow and used as a connection ID
      */
-    eurecaClient.exports.setFingerprint = function(fingerprint){
+    eurecaClient.exports.handshakeToClient = function(fingerprint){
         myFingerprint = fingerprint;
         console.log("Fingerprint set to: ", myFingerprint);
         create();
-        eurecaServer.handshake();
-        ready = true;
         var cookies = document.cookie.split(';');
         for(var index in cookies){
             if(cookies[index].indexOf('username=') > -1){
-                console.log(cookies[index].replace('username=', ''));
-                return cookies[index].replace('username=', '');
+                eurecaServer.handshakeToServer(cookies[index].replace('username=', ''));
+                break;
             }
         }
+        ready = true;
     };
 
-    /** clientDisconnect
+    /** peerDisconnect
      * Called by server in server event handler `onDisconnect`
      * Called on each client since the server has to inform them of a player leaving
      */
-    eurecaClient.exports.clientDisconnect = function(peerFingerprint){
+    eurecaClient.exports.peerDisconnect = function(peerFingerprint){
         if(playerList[peerFingerprint]){
             console.log("Killing %s", playerList[peerFingerprint]);
             playerList[peerFingerprint].kill();
         }
     };
 
-    /** spawnEnemy
+    /** spawnPeer
      * Called by server in server method `handshake`
      * Called on each client to spawn the newly joined player
      */
-    eurecaClient.exports.spawnEnemy = function(peerFingerprint, x, y){
+    eurecaClient.exports.spawnPeer = function(peerFingerprint, x, y){
         // Guard against spawning client's self
         if(myFingerprint == peerFingerprint) return;
         console.log(myFingerprint, "spawning player on", peerFingerprint);

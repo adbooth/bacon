@@ -1,14 +1,15 @@
-""" Transpiled from 'src/models/Game.coffee' to 'models/Game.js'
-"""
+### Game.coffee ###
 # Module imports
 Player = require './Player'
 
 
 class Game
-  constructor: -> @players = {}
+  constructor: ->
+    @players = {}
+    @currentPlayerIndex = 1
 
   addPlayer: (fingerprint, remote, username, x=0, y=0) ->
-    @players[fingerprint] = new Player(this, fingerprint, remote, username, x, y)
+    @players[fingerprint] = new Player(this, fingerprint, remote, x=x, y=y)
 
   removePlayer: (fingerprint) ->
     delete @players[fingerprint]

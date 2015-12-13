@@ -1,16 +1,12 @@
-""" Transpiled from 'src/controllers.coffee' to 'controllers.js'
-"""
+### routes.coffee ###
 # 3rd party imports
 router = require('express').Router()
-eureca = require('./app').eureca
 # Module imports
 game = require('./app').game
-
 
 # Index route
 router.get '/', (req, res) ->
   res.redirect '/start'
-
 
 # Start routes
 router.get '/start', (req, res) ->
@@ -28,16 +24,9 @@ router.post '/start', (req, res) ->
     res.render 'start'
 
 
-# Play routes
+# Play route
 router.get '/play', (req, res) ->
   res.render 'play'
-# router.post '/play', (req, res) ->
-#   res.send {
-#     player_data: {
-#       username: req.session.username
-#     }
-#     game_data: {}
-#   }
 
 
 # Export the router that was just made

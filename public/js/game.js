@@ -66,9 +66,10 @@ function update(){
     land.tilePosition.x = -game.camera.x;
     land.tilePosition.y = -game.camera.y;
 
+    // Update all the players
     for(var key in playerList){ if(playerList.hasOwnProperty(key)){
         if(!playerList[key]) continue;
-        if(playerList[key].alive){
+        if(playerList[key].alive){ // I feel like maybe this should be handled in the `player.update()` method?
             playerList[key].update();
         }
     }}
