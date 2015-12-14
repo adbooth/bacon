@@ -29,17 +29,17 @@ eurecaServer.onConnect (conn) ->
  * Called in client setup function
  * Gets client up to speed
  ###
-eurecaServer.exports.handshakeToServer = (username) ->
+eurecaServer.exports.handshakeToServer = (payload) ->
   requesterFingerprint = this.connection.id
   remote = eurecaServer.getClient requesterFingerprint
 
   # Add client to game
-  requester = game.addPlayer requesterFingerprint, remote, username
+  requester = game.addPlayer requesterFingerprint, remote, payload.username, payload.x, payload.y
 
   # Loop through players to update everyone
   for fingerprint, player of game.players
     # Alert existing players of join
-    player.remote.addPeer requesterFingerprint, requester.x, requester.y
+    player.remote.addPeer requesterFingerprint, requester.username, requester.x, requester.y
     # Fill requester in on other players
     laststate = player.laststate
     [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]

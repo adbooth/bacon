@@ -35,7 +35,11 @@ var eurecaClientSetup = function(){
             }
         }
         // Send username back to client
-        eurecaServer.handshakeToServer(myUsername);
+        eurecaServer.handshakeToServer({
+            username: myUsername,
+            x: payload.x,
+            y: payload.y
+        });
 
         // Create game world and let game update loop
         create(payload.gameSize, payload.x, payload.y);

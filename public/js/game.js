@@ -10,8 +10,8 @@ function resizeGame(){
 
     game.width = width;
     game.height = height;
-    game.stage.bounds.width = width;
-    game.stage.bounds.height = height;
+    game.world.bounds.width = width;
+    game.world.bounds.height = height;
 
     if(game.renderType === Phaser.WEBGL){
     	game.renderer.resize(width, height);
@@ -25,7 +25,8 @@ var land;
 var cursors;
 var bulletTime = 0;
 
-var game = new Phaser.Game($(window).height(), $(window).width(), Phaser.AUTO, 'phaser-example', {
+var game = new Phaser.Game($(window).width(), $(window).height(), Phaser.AUTO, 'phaser-example', {
+// var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
     preload: preload,
     create: eurecaClientSetup,
     update: update
@@ -42,12 +43,13 @@ function preload(){
 // Builds/initializes game world
 function create(gameSize, playerX, playerY){
     // Must make size of game world
+    // game.world.setBounds(-gameSize/2, -gameSize/2, gameSize, gameSize);
     game.world.setBounds(-gameSize/2, -gameSize/2, gameSize, gameSize);
     // Not sure what this does
     game.stage.disableVisibilityChange = true;
 
     // Tiled background
-    land = game.add.tileSprite(0, 0, $(window).height(), $(window).width(), 'background');
+    land = game.add.tileSprite(0, 0, $(window).width(), $(window).height(), 'background');
     land.fixedToCamera = true;
 
     // Protagonist setup
