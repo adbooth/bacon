@@ -30,7 +30,7 @@ var eurecaClientSetup = function(){
         var cookies = document.cookie.split(';');
         for(var index in cookies){
             if(cookies[index].indexOf('username=') > -1){
-                myUsername = cookies[index].replace('username=', '');
+                myUsername = cookies[index].replace(' username=', '');
                 break;
             }
         }
@@ -55,7 +55,7 @@ var eurecaClientSetup = function(){
         if(myFingerprint == peerFingerprint) return;
         console.log(myFingerprint, "spawning player on", peerFingerprint);
         // Add new player to player list
-        playerList[peerFingerprint] = new Player(peerFingerprint, game);
+        playerList[peerFingerprint] = new Player(game, peerFingerprint, username, x, y);
         console.log("Enemy spawned");
     };
 

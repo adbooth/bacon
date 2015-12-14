@@ -53,7 +53,7 @@ function create(gameSize, playerX, playerY){
     land.fixedToCamera = true;
 
     // Protagonist setup
-    protagonist = new Player(game, myFingerprint, playerX, playerY);
+    protagonist = new Player(game, myFingerprint, myUsername, playerX, playerY);
     playerList = {};
     playerList[myFingerprint] = protagonist;
     sprite = protagonist.sprite;
@@ -87,7 +87,6 @@ function update(){
 
     // Update all the players
     for(var key in playerList){ if(playerList.hasOwnProperty(key)){
-        if(!playerList[key]) continue;
-        playerList[key].update();
+        if(playerList[key]) playerList[key].update();
     }}
 }

@@ -4,12 +4,6 @@ spawn = require('child_process').spawn
 printOutput = (data, proc, stream) -> console.log "#{proc} #{stream}: #{data}"
 
 
-task 'test', 'Runs from coffee', ->
-  test = spawn 'coffee', ['src/app.coffee']
-  test.stdout.on 'data', (data) -> printOutput data, 'test', 'stdout'
-  test.stderr.on 'data', (data) -> printOutput data, 'test', 'stderr'
-
-
 task 'run', 'Builds and runs', ->
   build = spawn 'cake', ['build']
   build.stdout.on 'data', (data) -> printOutput data, 'run', 'stdout'
@@ -24,7 +18,7 @@ task 'build', 'Builds coffeescript to js', ->
 
 
 task 'start', 'Runs built code', ->
-  start = spawn 'node', ['app.js']
+  start = exec 'foreman start'
   start.stdout.on 'data', (data) -> printOutput data, 'start', 'stdout'
   start.stderr.on 'data', (data) -> printOutput data, 'start', 'stderr'
 

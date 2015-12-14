@@ -34,16 +34,21 @@ eurecaServer.exports.handshakeToServer = (payload) ->
   remote = eurecaServer.getClient requesterFingerprint
 
   # Add client to game
-  requester = game.addPlayer requesterFingerprint, remote, payload.username, payload.x, payload.y
+  requester = game.addPlayer(
+    requesterFingerprint, remote, payload.username, payload.x, payload.y)
 
   # Loop through players to update everyone
   for fingerprint, player of game.players
-    # Alert existing players of join
-    player.remote.addPeer requesterFingerprint, requester.username, requester.x, requester.y
-    # Fill requester in on other players
-    laststate = player.laststate
-    [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
-    requester.remote.addPeer fingerprint, x, y
+    unless fingerprint == requesterFingerprint
+      # Alert existing players of join
+      player.remote.addPeer(
+        requesterFingerprint, requester.username, requester.x, requester.y)
+
+      # Fill requester in on other players
+      laststate = player.laststate
+      [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
+      requester.remote.addPeer fingerprint, player.username, x, y
+      console.log player.username
 
 ###* handleKeys
  * Called in `Player`'s `update()` function

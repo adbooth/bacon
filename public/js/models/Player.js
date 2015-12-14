@@ -12,6 +12,15 @@ Player = function(game, fingerprint, username, x, y){
     this.alive = true;
     this.currentSpeed = 0;
 
+    // Username setup
+    this.usernameLabel = this.game.add.text(0, -30, '<' + this.username + '>', {
+        font: "15px Arial",
+        fill: "#00CC66"
+    });
+    this.usernameLabel.anchor.set(0.5, 0.5);
+    this.sprite.addChild(this.usernameLabel);
+
+
     // Sprite initial values
     this.sprite.health = 3;
     this.sprite.angle = 0;
@@ -83,12 +92,11 @@ Player.prototype.update = function(){
         this.input.angularVelocity = this.sprite.body.angularVelocity;
         this.input.acceleration = this.sprite.body.acceleration;
         this.input.currentSpeed = this.currentSpeed;
-        // console.log("Sending keys to server from ID: ", this.fingerprint);
+        console.log("Sending keys to server from ID: ", this.fingerprint);
         eurecaServer.handleKeys(this.input);
     }
 
     // This is where we finally update the sprites' movement, based on the `cursor` values, which are updated by the server previously
-    // TODO confirm the above is true
     if(this.cursor.up){
         game.physics.arcade.accelerationFromRotation(this.sprite.rotation, 100000, this.sprite.body.acceleration);
     }else if(this.cursor.down){
@@ -109,6 +117,18 @@ Player.prototype.update = function(){
             y: this.cursor.ty
         });
     }
+    // if(this.cursor.up){
+    //     this.sprite.body.moveUp(this.sprite.body.maxVelocity);
+    // }
+    // if(this.cursor.down){
+    //     this.sprite.body.moveDown(this.sprite.body.maxVelocity);
+    // }
+    // if(this.cursor.left){
+    //     this.sprite.body.moveLeft(this.sprite.body.maxVelocity);
+    // }
+    // if(this.cursor.right){
+    //     this.sprite.body.moveRight(this.sprite.body.maxVelocity);
+    // }
 };
 
 /** fire
