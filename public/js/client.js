@@ -30,7 +30,7 @@ var eurecaClientSetup = function(){
         var cookies = document.cookie.split(';');
         for(var index in cookies){
             if(cookies[index].indexOf('username=') > -1){
-                myUsername = cookies[index].replace(' username=', '');
+                myUsername = cookies[index].replace('username=', '').replace(' ', '');
                 break;
             }
         }
