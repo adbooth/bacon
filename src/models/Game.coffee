@@ -9,7 +9,8 @@ class Game
     @gameSize = 2000
 
   addPlayer: (fingerprint, remote, username, x, y) ->
-    @players[fingerprint] = new Player(this, fingerprint, remote, username, x, y)
+    @players[fingerprint] = new Player(
+      this, fingerprint, remote, username, x, y)
 
   removePlayer: (fingerprint) ->
     delete @players[fingerprint]

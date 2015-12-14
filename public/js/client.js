@@ -75,7 +75,6 @@ var eurecaClientSetup = function(){
             player.sprite.angle = state.angle;
             player.sprite.rotation = state.rotation;
             player.sprite.currentSpeed = state.currentSpeed;
-            player.update();
         }
     };
 
