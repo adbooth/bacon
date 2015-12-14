@@ -40,4 +40,4 @@ server = exports.server = app.listen app.get('port'), ->
   port = app.get 'port'
   console.log "Application server running at http://#{host}:#{port}"
 
-require './eurecaServer'
+require './server'

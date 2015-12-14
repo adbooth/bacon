@@ -3,10 +3,11 @@
 /** Player
  * Class represents a player object for the game, with reference to a Phaser sprite object
  */
-Player = function(fingerprint, game, x, y){
+Player = function(game, fingerprint, username, x, y){
     this.game = game;
+    this.username = username;
     console.log("Creating", fingerprint, "'s sprite'");
-    this.sprite = game.add.sprite(x, y, 'pig');
+    this.sprite = this.game.add.sprite(x, y, 'pig');
     this.fingerprint = this.sprite.id = fingerprint;
     this.alive = true;
     this.currentSpeed = 0;
@@ -15,6 +16,7 @@ Player = function(fingerprint, game, x, y){
     this.sprite.health = 3;
     this.sprite.angle = 0;
     this.sprite.anchor.set(0.5, 0.5);
+    this.sprite.name = this.username;
     // Sprite physics
     game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
     this.sprite.body.immovable = false;

@@ -4,13 +4,18 @@ html(lang='en')
         // Libraries
         script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', defer)
         script(src='https://cdnjs.cloudflare.com/ajax/libs/phaser/2.4.4/phaser.min.js', defer)
+        script(src='https://code.jquery.com/jquery-2.1.4.min.js', defer)
         script(src='/eureca.js', defer)
         
         // JavaScript
         script(src='/js/client.js', defer)
         script(src='/js/game.js', defer)
         script(src='/js/models/Player.js', defer)
+        
+        // CSS
+        link(rel='stylesheet', href='/css/play.css')
 
         // Page stuff
         title= 'Steal the Bacon'
-        link(rel='shorcut icon', href='/assets/bacon.png')    
+        link(rel='shorcut icon', href='/assets/bacon.png')
+    body(class='stop-scrolling')

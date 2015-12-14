@@ -1,14 +1,31 @@
 /* game.js */
 
+$(window).resize(function(){
+    window.resizeGame();
+});
+
+function resizeGame(){
+    var height = $(window).height();
+    var width = $(window).width();
+
+    game.width = width;
+    game.height = height;
+    game.stage.bounds.width = width;
+    game.stage.bounds.height = height;
+
+    if(game.renderType === Phaser.WEBGL){
+    	game.renderer.resize(width, height);
+    }
+}
+
 // Game globals
 var protagonist;
 var playerList;
 var land;
 var cursors;
 var bulletTime = 0;
-var bounds = 2000;
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
+var game = new Phaser.Game($(window).height(), $(window).width(), Phaser.AUTO, 'phaser-example', {
     preload: preload,
     create: eurecaClientSetup,
     update: update
@@ -23,18 +40,18 @@ function preload(){
 }
 
 // Builds/initializes game world
-function create(){
+function create(gameSize, playerX, playerY){
     // Must make size of game world
-    game.world.setBounds(-bounds/2, -bounds/2, bounds, bounds);
+    game.world.setBounds(-gameSize/2, -gameSize/2, gameSize, gameSize);
     // Not sure what this does
-    game.stage.disableVisibilityChange  = true;
+    game.stage.disableVisibilityChange = true;
 
     // Tiled background
-    land = game.add.tileSprite(0, 0, 800, 600, 'background');
+    land = game.add.tileSprite(0, 0, $(window).height(), $(window).width(), 'background');
     land.fixedToCamera = true;
 
     // Protagonist setup
-    protagonist = new Player(myFingerprint, game, game.rnd.integerInRange(-bounds/2, bounds/2), game.rnd.integerInRange(-bounds/2, bounds/2));
+    protagonist = new Player(game, myFingerprint, playerX, playerY);
     playerList = {};
     playerList[myFingerprint] = protagonist;
     sprite = protagonist.sprite;
@@ -56,10 +73,10 @@ function update(){
     if(!ready) return;
 
     // Give protagonist new input values
-    protagonist.input.left = cursors.left.isDown;
-    protagonist.input.right = cursors.right.isDown;
     protagonist.input.up = cursors.up.isDown;
     protagonist.input.down = cursors.down.isDown;
+    protagonist.input.left = cursors.left.isDown;
+    protagonist.input.right = cursors.right.isDown;
     protagonist.input.fire = game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR);
     protagonist.input.tx = game.input.x + game.camera.x;
     protagonist.input.ty = game.input.y + game.camera.y;
@@ -69,8 +86,6 @@ function update(){
     // Update all the players
     for(var key in playerList){ if(playerList.hasOwnProperty(key)){
         if(!playerList[key]) continue;
-        if(playerList[key].alive){ // I feel like maybe this should be handled in the `player.update()` method?
-            playerList[key].update();
-        }
+        playerList[key].update();
     }}
 }

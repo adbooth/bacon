@@ -15,14 +15,10 @@ router.post '/start', (req, res) ->
   target_username = req.body.username
   unless game.usernameExists target_username
     # Store username on cookie
-    res.cookie 'username', target_username, {
-      maxAge: 900000
-      httpOnly: false
-    }
+    res.cookie 'username', target_username, { maxAge: 120000, httpOnly: false}
     res.redirect '/play'
   else
     res.render 'start'
-
 
 # Play route
 router.get '/play', (req, res) ->
