@@ -23,7 +23,7 @@
 
   eurecaServer.onConnect(function(conn) {
     var ref, x, y;
-    console.log("Client connected, id: " + conn.id);
+    console.log("Connected with " + conn.id);
     ref = game.generateXY(), x = ref[0], y = ref[1];
     return eurecaServer.getClient(conn.id).handshakeToClient({
       fingerprint: conn.id,
@@ -52,8 +52,7 @@
         player.remote.addPeer(requesterFingerprint, requester.username, requester.x, requester.y);
         laststate = player.laststate;
         ref1 = laststate ? [laststate.x, laststate.y] : [0, 0], x = ref1[0], y = ref1[1];
-        requester.remote.addPeer(fingerprint, player.username, x, y);
-        results.push(console.log(player.username));
+        results.push(requester.remote.addPeer(fingerprint, player.username, x, y));
       } else {
         results.push(void 0);
       }
@@ -87,7 +86,7 @@
 
   eurecaServer.onDisconnect(function(conn) {
     var fingerprint, player, ref, results;
-    console.log("Client disconnected, id: " + conn.id);
+    console.log("Disconnected with " + conn.id);
     game.removePlayer(conn.id);
     ref = game.players;
     results = [];

@@ -22,9 +22,7 @@ var eurecaClientSetup = function(){
      * `fingerprint` is created by Eureca library somehow and used as a connection ID
      */
     eurecaClient.exports.handshakeToClient = function(payload){
-        console.log("Handshake started");
         myFingerprint = payload.fingerprint;
-        console.log("Fingerprint set to: ", myFingerprint);
 
         // Pull username out of cookie string
         var cookies = document.cookie.split(';');
@@ -53,10 +51,8 @@ var eurecaClientSetup = function(){
     eurecaClient.exports.addPeer = function(peerFingerprint, username, x, y){
         // Guard against spawning client's self
         if(myFingerprint == peerFingerprint) return;
-        console.log(myFingerprint, "spawning player on", peerFingerprint);
         // Add new player to player list
         playerList[peerFingerprint] = new Player(game, peerFingerprint, username, x, y);
-        console.log("Enemy spawned");
     };
 
     /** updateState
@@ -67,14 +63,9 @@ var eurecaClientSetup = function(){
         player = playerList[fingerprint];
         if(player){
             player.cursor = state;
-            // Update location data
             player.sprite.x = state.x;
             player.sprite.y = state.y;
-            // Update movement data
-            player.sprite.body.angularVelocity = state.angularVelocity;
-            player.sprite.angle = state.angle;
-            player.sprite.rotation = state.rotation;
-            player.sprite.currentSpeed = state.currentSpeed;
+            player.cursor.fire = state.fire;
         }
     };
 
@@ -84,8 +75,11 @@ var eurecaClientSetup = function(){
      */
     eurecaClient.exports.peerDisconnect = function(peerFingerprint){
         if(playerList[peerFingerprint]){
-            console.log("Killing %s", playerList[peerFingerprint]);
-            playerList[peerFingerprint].kill();
+            playerList[peerFingerprint].kill(peerFingerprint);
+            delete playerList[peerFingerprint];
+        }
+        if(fingerprint == myFingerprint){
+            window.location.replace('/start');
         }
     };
 };

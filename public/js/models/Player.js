@@ -6,34 +6,35 @@
 Player = function(game, fingerprint, username, x, y){
     this.game = game;
     this.username = username;
-    console.log("Creating", fingerprint, "'s sprite'");
     this.sprite = this.game.add.sprite(x, y, 'pig');
+    this.sprite.animations.add('up', [0, 1, 2, 3], 12);
+    this.sprite.animations.add('down', [4, 5, 6, 7], 12);
+    this.sprite.animations.add('left', [11, 10, 9, 8], 12);
+    this.sprite.animations.add('right', [12, 13, 14, 15], 12);
+
+    this.sprite.name = this.username;
     this.fingerprint = this.sprite.id = fingerprint;
     this.alive = true;
-    this.currentSpeed = 0;
 
     // Username setup
     this.usernameLabel = this.game.add.text(0, -30, '<' + this.username + '>', {
         font: "15px Arial",
-        fill: "#00CC66"
+        fill: "#000000"
     });
     this.usernameLabel.anchor.set(0.5, 0.5);
     this.sprite.addChild(this.usernameLabel);
-
 
     // Sprite initial values
     this.sprite.health = 3;
     this.sprite.angle = 0;
     this.sprite.anchor.set(0.5, 0.5);
-    this.sprite.name = this.username;
     // Sprite physics
     game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
-    this.sprite.body.immovable = false;
+    this.sprite.body.immovable = true;
     this.sprite.body.maxVelocity.set(200);
-    this.sprite.body.drag.set(100);     // TODO look up this sprite field
     this.sprite.body.collideWorldBounds = true;
-    this.sprite.body.bounce.setTo(0, 0);        // TODO look up this sprite field
-    game.physics.arcade.velocityFromRotation(this.sprite.rotation, 0, this.sprite.body.velocity);
+    this.sprite.body.bounce.setTo(0, 0);
+    // game.physics.arcade.velocityFromRotation(this.sprite.rotation, 0, this.sprite.body.velocity);
 
     // Bullet business
     this.bullets = game.add.group();
@@ -44,7 +45,7 @@ Player = function(game, fingerprint, username, x, y){
     this.bullets.setAll('anchor.y', 0.5);
     this.bullets.setAll('outOfBoundsKill', true);
     this.bullets.setAll('checkWorldBounds', true);
-    this.fireRate = 500;
+    this.fireRate = 400;
     this.nextFire = 0;
 
     // Control fields
@@ -86,49 +87,29 @@ Player.prototype.update = function(){
         // Location data
         this.input.x = this.sprite.x;
         this.input.y = this.sprite.y;
-        // Movement data
-        this.input.angle = this.sprite.angle;
-        this.input.rotation = this.sprite.rotation;
-        this.input.angularVelocity = this.sprite.body.angularVelocity;
-        this.input.acceleration = this.sprite.body.acceleration;
-        this.input.currentSpeed = this.currentSpeed;
-        console.log("Sending keys to server from ID: ", this.fingerprint);
         eurecaServer.handleKeys(this.input);
     }
 
     // This is where we finally update the sprites' movement, based on the `cursor` values, which are updated by the server previously
     if(this.cursor.up){
-        game.physics.arcade.accelerationFromRotation(this.sprite.rotation, 100000, this.sprite.body.acceleration);
-    }else if(this.cursor.down){
-        game.physics.arcade.accelerationFromRotation(this.sprite.rotation, -100000, this.sprite.body.acceleration);
-    }else{
-        this.sprite.body.acceleration.set(0);
+        this.sprite.y -= 3;
+        this.sprite.animations.play('up');
+    }
+    if(this.cursor.down){
+        this.sprite.y += 3;
+        this.sprite.animations.play('down');
     }
     if(this.cursor.left){
-        this.sprite.body.angularVelocity = -400;
-    }else if(this.cursor.right){
-        this.sprite.body.angularVelocity = 400;
-    }else{
-        this.sprite.body.angularVelocity = 0;
+        this.sprite.x -= 3;
+        this.sprite.animations.play('left');
     }
-    if(this.cursor.fire && this.canFire){
-        this.fire({
-            x: this.cursor.tx,
-            y: this.cursor.ty
-        });
+    if(this.cursor.right){
+        this.sprite.x += 3;
+        this.sprite.animations.play('right');
     }
-    // if(this.cursor.up){
-    //     this.sprite.body.moveUp(this.sprite.body.maxVelocity);
-    // }
-    // if(this.cursor.down){
-    //     this.sprite.body.moveDown(this.sprite.body.maxVelocity);
-    // }
-    // if(this.cursor.left){
-    //     this.sprite.body.moveLeft(this.sprite.body.maxVelocity);
-    // }
-    // if(this.cursor.right){
-    //     this.sprite.body.moveRight(this.sprite.body.maxVelocity);
-    // }
+    if(this.cursor.fire){
+        this.fire();
+    }
 };
 
 /** fire
@@ -142,8 +123,20 @@ Player.prototype.fire = function(){
         this.nextFire = this.game.time.now + this.fireRate;
         // Not sure what the rest does
         var bullet = this.bullets.getFirstDead();
-        bullet.reset(this.sprite.body.x + 16, this.sprite.body.y + 16);
-        game.physics.arcade.velocityFromRotation(this.sprite.rotation, 400, bullet.body.velocity);
+        bullet.reset(this.sprite.x - 8, this.sprite.y - 8);
+        game.physics.arcade.moveToPointer(bullet, 300);
+    }
+};
+
+/**
+ * TODO
+ */
+Player.prototype.getHit = function(){
+    console.log(this.fingerprint, "was hit");
+    this.health--;
+    if(this.health < 1){
+        this.alive = false;
+        this.kill();
     }
 };
 

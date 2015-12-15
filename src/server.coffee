@@ -16,7 +16,7 @@ eurecaServer.attach require('./app').server
  * This sends the client some initialization data
  ###
 eurecaServer.onConnect (conn) ->
-  console.log "Client connected, id: #{conn.id}"
+  console.log "Connected with #{conn.id}"
   [x, y] = game.generateXY()
   eurecaServer.getClient(conn.id).handshakeToClient {
     fingerprint: conn.id
@@ -48,7 +48,6 @@ eurecaServer.exports.handshakeToServer = (payload) ->
       laststate = player.laststate
       [x, y] = if laststate then [laststate.x, laststate.y] else [0, 0]
       requester.remote.addPeer fingerprint, player.username, x, y
-      console.log player.username
 
 ###* handleKeys
  * Called in `Player`'s `update()` function
@@ -65,7 +64,7 @@ eurecaServer.exports.handleKeys = (keys) ->
  * On client disconnect, remove client from client list and broadcast disconnect
  ###
 eurecaServer.onDisconnect (conn) ->
-  console.log "Client disconnected, id: #{conn.id}"
+  console.log "Disconnected with #{conn.id}"
   # Remove client from client list
   game.removePlayer conn.id
 

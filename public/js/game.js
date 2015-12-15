@@ -22,11 +22,11 @@ function resizeGame(){
 var protagonist;
 var playerList;
 var land;
-var cursors;
-var bulletTime = 0;
+var wasd;
+var mouseSprite;
 
+// Create game object
 var game = new Phaser.Game($(window).width(), $(window).height(), Phaser.AUTO, 'phaser-example', {
-// var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
     preload: preload,
     create: eurecaClientSetup,
     update: update
@@ -34,16 +34,19 @@ var game = new Phaser.Game($(window).width(), $(window).height(), Phaser.AUTO, '
 
 // Loads assets
 function preload(){
-    game.load.image('background', 'assets/grid.png');
-    game.load.image('bullet', 'assets/bullets.png');
-    game.load.image('pig', 'assets/pig.png');
-    game.load.image('bacon', 'assets/bacon.png');
+    $('canvas').css('cursor', 'none');
+
+    game.load.image('bacon', '/assets/bacon.png');
+    game.load.image('background', '/assets/dirt.png');
+    game.load.image('bullet', '/assets/bullet.png');
+    game.load.image('crosshair', '/assets/crosshair.png');
+
+    game.load.spritesheet('pig', '/assets/pigsheet.png', 25, 30, 16);
 }
 
 // Builds/initializes game world
 function create(gameSize, playerX, playerY){
     // Must make size of game world
-    // game.world.setBounds(-gameSize/2, -gameSize/2, gameSize, gameSize);
     game.world.setBounds(-gameSize/2, -gameSize/2, gameSize, gameSize);
     // Not sure what this does
     game.stage.disableVisibilityChange = true;
@@ -59,13 +62,22 @@ function create(gameSize, playerX, playerY){
     sprite = protagonist.sprite;
     sprite.bringToTop();
 
+    // Mouse setup
+    mouseSprite = game.add.sprite(game.input.mousePointer.worldX, game.input.mousePointer.worldY, 'crosshair');
+    mouseSprite.anchor.set(0.5, 0.5);
+
     // Camera setup
     game.camera.follow(sprite);
     game.renderer.clearBeforeRender = false;
     game.renderer.roundPixels = true;
 
     // Control setup
-    cursors = game.input.keyboard.createCursorKeys();
+    wasd = {
+        up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+        down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+        left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+        right: game.input.keyboard.addKey(Phaser.Keyboard.D)
+    };
     game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 }
 
@@ -75,18 +87,25 @@ function update(){
     if(!ready) return;
 
     // Give protagonist new input values
-    protagonist.input.up = cursors.up.isDown;
-    protagonist.input.down = cursors.down.isDown;
-    protagonist.input.left = cursors.left.isDown;
-    protagonist.input.right = cursors.right.isDown;
-    protagonist.input.fire = game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR);
+    protagonist.input.up = wasd.up.isDown;
+    protagonist.input.down = wasd.down.isDown;
+    protagonist.input.left = wasd.left.isDown;
+    protagonist.input.right = wasd.right.isDown;
+    protagonist.input.fire = game.input.activePointer.isDown;
     protagonist.input.tx = game.input.x + game.camera.x;
     protagonist.input.ty = game.input.y + game.camera.y;
     land.tilePosition.x = -game.camera.x;
     land.tilePosition.y = -game.camera.y;
+    // Draw mouse
+    mouseSprite.position.set(game.input.mousePointer.worldX, game.input.mousePointer.worldY);
 
     // Update all the players
-    for(var key in playerList){ if(playerList.hasOwnProperty(key)){
-        if(playerList[key]) playerList[key].update();
+    for(var key1 in playerList){ if(playerList.hasOwnProperty(key1)){
+        // for(var key2 in playerList){ if(playerList.hasOwnProperty(key2)){
+        //     if(key1 != key2){
+        //         game.physics.arcade.overlap(playerList[key2].bullets, playerList[key1], playerList[key1].getHit(), null, this);
+        //     }
+        // }}
+        if(playerList[key1]) playerList[key1].update();
     }}
 }
