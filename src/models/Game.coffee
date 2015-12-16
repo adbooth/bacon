@@ -1,18 +1,30 @@
-""" Transpiled from 'src/models/Game.coffee' to 'models/Game.js'
-"""
+### Game.coffee ###
 # Module imports
 Player = require './Player'
 
 
 class Game
-  constructor: -> @players = {}
+  constructor: ->
+    @players = {}
+    @gameSize = 2000
 
-  addPlayer: (username, x=50, y=50) ->
-    player = new Player(this, username, x, y)
-    @players[username] = player
+  addPlayer: (fingerprint, remote, username, x, y) ->
+    @players[fingerprint] = new Player(
+      this, fingerprint, remote, username, x, y)
 
-  removePlayer: (username) ->
-    delete @player[username]
+  removePlayer: (fingerprint) ->
+    delete @players[fingerprint]
+
+  usernameExists: (username) ->
+    username in [player.username for player in @players]
+
+  generateXY: ->
+    loop
+      randx = @gameSize*(2*Math.random() - 1)
+      continue if randx/10 in [player.x/10 for player in @players]
+      randy = @gameSize*(2*Math.random() - 1)
+      break unless randy/10 in [player.y/10 for player in @players]
+    [randx, randy]
 
 
-module.exports = new Game()
+module.exports = new Game

@@ -1,130 +1,131 @@
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
+/* game.js */
 
+$(window).resize(function(){
+    window.resizeGame();
+});
 
-        function preload () {
+function resizeGame(){
+    var height = $(window).height();
+    var width = $(window).width();
 
-            game.load.image('background', 'assets/grid.png');
-            game.load.image('bullet', 'assets/bullets.png');
-            game.load.image('pig', 'assets/pig.png');
-            game.load.image('bacon', 'assets/bacon.png');
+    game.width = width;
+    game.height = height;
+    game.world.bounds.width = width;
+    game.world.bounds.height = height;
 
-        }
-        var pig;
-        var cursors;
-        var bullet;
-        var bullets;
-        var bulletTime = 0;
+    if(game.renderType === Phaser.WEBGL){
+    	game.renderer.resize(width, height);
+    }
+}
 
-        function create () {
+// Game globals
+var protagonist;
+var playerList;
+var land;
+var cursors;
+var bulletTimes = 0;
+var bacon;
+var scoreText;
+var healthText;
+var game = new Phaser.Game($(window).width(), $(window).height(), Phaser.AUTO, 'phaser-example', {
+// var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
+    preload: preload,
+    create: eurecaClientSetup,
+    update: update
+});
 
+// Loads assets
+function preload(){
+    game.load.image('background', 'assets/grid.png');
+    game.load.image('bullet', 'assets/bullets.png');
+    game.load.image('pig', 'assets/pig.png');
+    game.load.image('bacon', 'assets/bacon.png');s
+}
 
-            game.renderer.clearBeforeRender = false;
-            game.renderer.roundPixels = true;
+// Builds/initializes game world
+function create(gameSize, playerX, playerY){
+    // Must make size of game world
+    // game.world.setBounds(-gameSize/2, -gameSize/2, gameSize, gameSize);
+    game.world.setBounds(-gameSize/2, -gameSize/2, gameSize, gameSize);
+    // Not sure what this does
+    game.stage.disableVisibilityChange = true;
 
-            //  We need arcade physics
-            game.physics.startSystem(Phaser.Physics.ARCADE);
+    // Tiled background
+    land = game.add.tileSprite(0, 0, $(window).width(), $(window).height(), 'background');
+    land.fixedToCamera = true;
 
-            game.add.tileSprite(0, 0, 1920, 1920, 'background');
+    // Protagonist setup
+    protagonist = new Player(game, myFingerprint, myUsername, playerX, playerY);
+    playerList = {};
+    playerList[myFingerprint] = protagonist;
+    sprite = protagonist.sprite;
+    sprite.bringToTop();
 
-            game.world.setBounds(0, 0, 1920, 1920);
+    // Camera setup
+    game.camera.follow(sprite);
+    game.renderer.clearBeforeRender = false;
+    game.renderer.roundPixels = true;
 
+    scoreText = game.add.text(0, 0, 'Bacon Count: 0', { font: "40px Arial", fill: "#99231F"});
+    scoreText.fixedToCamera = true;
 
+    healthText = game.add.text(1250, 0, 'Health: 8', { font: "40px Arial", fill: "#99231F"});
+    healthText.fixedToCamera = true;
+    // Control setup
+    cursors = game.input.keyboard.createCursorKeys();
+    game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 
-            //  Our ships bullets
-        bullets = game.add.group();
-        bullets.enableBody = true;
-        bullets.physicsBodyType = Phaser.Physics.ARCADE;
-
-        // Collectable Bacon
-        bacon = game.add.group();
-        bacon.enableBody = true;
-         for (var i = 1; i < 50; i++)
-    {
-        //  Create a star inside of the 'stars' group
-        var piece = bacon.create(i*100/2, i*100/2, 'bacon');
-
+    //adding private bacon
+    bacon = game.add.group();
+    bacon.enableBody = true;
+    for (var i = 0; i < 10; i++){
+        var piece = bacon.create(
+          game.rnd.integerInRange(-1000, 1000),
+          game.rnd.integerInRange(-1000, 1000),
+          'bacon');
     }
 
+}
 
-        //  All 40 of them
-        bullets.createMultiple(40, 'bullet');
-        bullets.setAll('anchor.x', 0.5);
-        bullets.setAll('anchor.y', 0.5);
+// Game loop
+function update(){
+    // Don't start game loop until client is ready
+    if(!ready) return;
 
-        //  Our player pig (with camera follow)
-        pig = game.add.sprite(game.center,0, 'pig');
-        pig.anchor.set(0.5);
-        game.camera.follow(pig);
+    // Give protagonist new input values
+    protagonist.input.up = cursors.up.isDown;
+    protagonist.input.down = cursors.down.isDown;
+    protagonist.input.left = cursors.left.isDown;
+    protagonist.input.right = cursors.right.isDown;
+    protagonist.input.fire = game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR);
+    protagonist.input.tx = game.input.x + game.camera.x;
+    protagonist.input.ty = game.input.y + game.camera.y;
+    land.tilePosition.x = -game.camera.x;
+    land.tilePosition.y = -game.camera.y;
 
-        //  and its physics settings
-        game.physics.enable(pig, Phaser.Physics.ARCADE);
+    // Update all the players
 
-        pig.body.drag.set(100);
-        pig.body.maxVelocity.set(200);
-
-        //  Game input
-        cursors = game.input.keyboard.createCursorKeys();
-        game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
-
-    }
-
-    function update() {
-
-        //if a pig overlaps with something from the bacon object (pieces), call collectBacon
-        game.physics.arcade.overlap(pig, bacon, collectBacon, null, this);
-
-        if (cursors.up.isDown){
-            game.physics.arcade.accelerationFromRotation(pig.rotation, 200, pig.body.acceleration);
-        }
-        else{
-            pig.body.acceleration.set(0);
-        }
-
-        if (cursors.left.isDown){
-            pig.body.angularVelocity = -150;
-        }
-        else if (cursors.right.isDown){
-            pig.body.angularVelocity = 150;
-        }
-        else{
-            pig.body.angularVelocity = 0;
-        }
-
-        if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
-            fireBullet();
-        }
-
-       // screenWrap(pig);
-
-        //bullets.forEachExists(screenWrap, this);
-
-    }
-
-    function collectBacon (pig, piece) {
-        piece.kill();
-    }
-
-    function fireBullet () {
-
-        if (game.time.now > bulletTime){
-            bullet = bullets.getFirstExists(false);
-
-            if (bullet){
-                bullet.reset(pig.body.x + 16, pig.body.y + 16);
-                bullet.lifespan = 2000;
-                bullet.rotation = pig.rotation;
-                game.physics.arcade.velocityFromRotation(pig.rotation, 400, bullet.body.velocity);
-                bulletTime = game.time.now + 50;
+            for (var i in playerList){
+          		if (!playerList[i]) continue;
+          		var curBullets = playerList[i].bullets;
+          		var curPlayer = playerList[i].sprite;
+        		  for (var j in playerList){
+        			     if (!playerList[j]) continue;
+        			        if (j!=i){
+        				            var targetPlayer = playerList[j];
+        				            game.physics.arcade.overlap(curBullets, targetPlayer.sprite, bulletHitPlayer, null, this);
+        			        }
+        			if (playerList[j].alive) {
+                playerList[j].update();
+              }
+        		  }
             }
-        }
+}
+function bulletHitPlayer(player, bullet) {
+    bullet.kill();
+    player.health--;
+    healthText.text = 'Health: ' + player.health;
+    if(player.health <= 0) player.kill();
 
-    }
 
-
-
-// function render() {
-
-//     game.debug.cameraInfo(game.camera, game.centerx, game.centery);
-//     game.debug.spriteInfo(sprite, 32, 32);
-
-// }
+}

@@ -1,9 +1,7 @@
-""" Transpiled from 'src/models/Player.coffee' to 'models/Player.js'
-"""
-
+### Player.coffee ###
 
 class Player
-  constructor: (@game, @username, @x=50, @y=50) ->
+  constructor: (@game, @fingerprint, @remote, @username, @x, @y) ->
 
 
 module.exports = Player

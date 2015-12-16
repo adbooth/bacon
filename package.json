@@ -7,9 +7,13 @@
     "body-parser": "^1.14.1",
     "coffee-script": "^1.10.0",
     "cookie-parser": "^1.4.0",
+    "engine.io": "^1.5.4",
+    "eureca.io": "^0.6.41",
     "express": "^4.13.3",
     "express-session": "^1.12.0",
-    "jade": "^1.11.0"
+    "jade": "^1.11.0",
+    "js-cookie": "^2.0.4",
+    "node-uuid": "^1.4.7"
   },
   "devDependencies": {},
   "scripts": {

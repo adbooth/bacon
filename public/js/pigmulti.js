@@ -35,7 +35,7 @@ var eurecaClientSetup = function() {
 		create();
 		eurecaServer.handshake();
 		ready = true;
-	}
+	};
 
 	eurecaClient.exports.kill = function(id)
 	{
@@ -43,7 +43,7 @@ var eurecaClientSetup = function() {
 			pigsList[id].kill();
 			console.log('killing ', id, pigsList[id]);
 		}
-	}
+	};
 
 	eurecaClient.exports.spawnEnemy = function(i, x, y)
 	{
@@ -54,7 +54,7 @@ var eurecaClientSetup = function() {
 		var pige = new Pig(i, game, pig);
 		console.log(pige.health);
 		pigsList[i] = pige;
-	}
+	};
 
 	eurecaClient.exports.updateState = function(id, state)
 	{
@@ -69,17 +69,17 @@ var eurecaClientSetup = function() {
 			pigsList[id].currentSpeed = state.currentSpeed;
 			pigsList[id].update();
 		}
-	}
-}
+	};
+};
 
 Pig = function (index, game, player) {
-  this.cursor = {
+	this.cursor = {
 		left:false,
 		right:false,
 		up:false,
 		down:false,
 		fire:false
-	}
+	};
 
 	this.input = {
 		left:false,
@@ -87,7 +87,7 @@ Pig = function (index, game, player) {
 		up:false,
 		down:false,
 		fire:false
-	}
+	};
 
   var x = 0;
   var y = 0;
@@ -123,7 +123,7 @@ Pig = function (index, game, player) {
 
   this.pig.angle = 0;
   game.physics.arcade.velocityFromRotation(this.pig.rotation, 0, this.pig.body.velocity);
-}
+};
 
 Pig.prototype.update = function() {
   var inputChanged = (
@@ -177,7 +177,7 @@ Pig.prototype.update = function() {
 		}
     // if (this.currentSpeed > 0) game.physics.arcade.velocityFromRotation(this.pig.rotation, this.currentSpeed, this.pig.body.velocity);
     // else game.physics.arcade.velocityFromRotation(this.pig.rotation, 0, this.pig.body.velocity);
-}
+};
 
   Pig.prototype.fire = function() {
 				if (!this.alive) return;
@@ -190,12 +190,12 @@ Pig.prototype.update = function() {
 						game.physics.arcade.velocityFromRotation(this.pig.rotation, 400,bullet.body.velocity);
 
         }
-			}
+	};
 
   Pig.prototype.kill = function() {
     this.alive = false;
     this.pig.kill();
-  }
+};
 
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: eurecaClientSetup, update: update });
         function preload () {
@@ -210,7 +210,7 @@ Pig.prototype.update = function() {
 
         function create () {
 
-            game.world.setBounds(-1000, -1000, 2000, 2000)
+            game.world.setBounds(-1000, -1000, 2000, 2000);
             game.stage.disableVisibilityChange  = true;
 
             //  Our tiled scrolling background
@@ -274,7 +274,6 @@ Pig.prototype.update = function() {
 
         for (var i in pigsList){
       		if (!pigsList[i]) continue;
-					pigsList
       		var curBullets = pigsList[i].bullets;
       		var curPig = pigsList[i].pig;
 
